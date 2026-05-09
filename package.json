@@ -4,7 +4,7 @@
   "description": "Hospital Management System - Root",
   "main": "api/index.js",
   "scripts": {
-    "build": "cd frontend && npm install && npm run build"
+    "build": "cd frontend && vite build"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
