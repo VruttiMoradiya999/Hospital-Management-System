@@ -6,7 +6,7 @@ const app = require('./backend/server');
 app.use(express.static(path.join(__dirname, 'frontend/dist')));
 
 // The "catchall" handler
-app.get('/:path*', (req, res) => {
+app.get('*', (req, res) => {
   if (req.path.startsWith('/api')) {
     return res.status(404).send('API route not found');
   }
