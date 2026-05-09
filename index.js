@@ -13,17 +13,29 @@ app.get('/api/seed', async (req, res) => {
 
     // Create Admin User
     const hashedPassword = await bcrypt.hash('password', 10);
+    
+    // Upsert Admin
     await User.findOneAndUpdate(
       { email: 'admin@hospital.com' },
-      { 
-        name: 'Admin User', 
-        password: hashedPassword, 
-        role: 'admin' 
-      },
-      { upsert: true, new: true }
+      { name: 'Admin User', password: hashedPassword, role: 'admin' },
+      { upsert: true }
     );
 
-    res.send('<h1>Database Seeded Successfully!</h1><p>You can now log in with admin@hospital.com / password</p>');
+    // Upsert Doctor
+    await User.findOneAndUpdate(
+      { email: 'doctor@hospital.com' },
+      { name: 'Dr. Smith', password: hashedPassword, role: 'doctor' },
+      { upsert: true }
+    );
+
+    // Upsert Nurse
+    await User.findOneAndUpdate(
+      { email: 'nurse@hospital.com' },
+      { name: 'Nurse Joy', password: hashedPassword, role: 'nurse' },
+      { upsert: true }
+    );
+
+    res.send('<h1>Database Seeded Successfully!</h1><p>Accounts Created: Admin, Doctor, and Nurse. (Password: password)</p>');
   } catch (error) {
     res.status(500).send('Error seeding database: ' + error.message);
   }
