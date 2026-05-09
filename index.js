@@ -5,6 +5,30 @@ const app = require('./backend/server');
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, 'frontend/dist')));
 
+// Temporary seed route (Delete this after use!)
+app.get('/api/seed', async (req, res) => {
+  try {
+    const User = require('./backend/models/User');
+    const bcrypt = require('bcryptjs');
+
+    // Create Admin User
+    const hashedPassword = await bcrypt.hash('password', 10);
+    await User.findOneAndUpdate(
+      { email: 'admin@hospital.com' },
+      { 
+        name: 'Admin User', 
+        password: hashedPassword, 
+        role: 'admin' 
+      },
+      { upsert: true, new: true }
+    );
+
+    res.send('<h1>Database Seeded Successfully!</h1><p>You can now log in with admin@hospital.com / password</p>');
+  } catch (error) {
+    res.status(500).send('Error seeding database: ' + error.message);
+  }
+});
+
 // The "catchall" handler
 app.get('*', (req, res) => {
   if (req.path.startsWith('/api')) {
