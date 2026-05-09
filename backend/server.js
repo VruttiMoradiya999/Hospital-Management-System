@@ -23,9 +23,7 @@ app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/patients', require('./routes/patientRoutes'));
 app.use('/api/appointments', require('./routes/appointmentRoutes'));
 
-app.get('/', (req, res) => {
-  res.send('Hospital Management API is running...');
-});
+// Root removed to prevent conflict with frontend
 
 const PORT = process.env.PORT || 5000;
 
