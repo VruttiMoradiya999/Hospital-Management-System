@@ -1,80 +1,66 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
 import { 
-  LayoutDashboard, 
-  Users, 
+  Home, 
   Calendar, 
+  Users, 
+  Mail, 
+  FileText, 
   Settings, 
   LogOut,
-  Activity
+  Stethoscope
 } from 'lucide-react';
 
 const Sidebar = () => {
-  const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    logout();
+    localStorage.removeItem('token');
     navigate('/login');
+    window.location.reload();
   };
 
   const navItems = [
-    { name: 'Dashboard', path: '/', icon: <LayoutDashboard size={20} /> },
-    { name: 'Patients', path: '/patients', icon: <Users size={20} /> },
-    // Only Admin can see users management
-    ...(user?.role === 'Admin' ? [{ name: 'Staff', path: '/staff', icon: <Settings size={20} /> }] : []),
-    { name: 'Appointments', path: '/appointments', icon: <Calendar size={20} /> },
+    { icon: Home, path: '/', label: 'Dashboard' },
+    { icon: Calendar, path: '/appointments', label: 'Appointments' },
+    { icon: Users, path: '/patients', label: 'Patients' },
+    { icon: Mail, path: '/messages', label: 'Messages' },
+    { icon: FileText, path: '/reports', label: 'Reports' },
+    { icon: Settings, path: '/settings', label: 'Settings' },
   ];
 
   return (
-    <div className="w-72 bg-white border-r border-gray-100 flex flex-col shadow-sm">
-      <div className="p-8 flex items-center gap-4">
-        <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
-          <Activity className="text-white w-6 h-6" />
-        </div>
-        <div>
-          <h1 className="text-xl font-bold text-gray-800 tracking-tight">MediCare</h1>
-          <p className="text-xs text-blue-600 font-medium tracking-wide uppercase">Pro System</p>
-        </div>
+    <aside className="w-24 h-screen fixed left-0 top-0 bg-white border-r border-gray-100 flex flex-col items-center py-8 z-50">
+      {/* Logo */}
+      <div className="w-14 h-14 bg-primary/10 rounded-3xl flex items-center justify-center text-primary mb-12 shadow-sm">
+        <Stethoscope className="w-8 h-8" />
       </div>
 
-      <div className="px-6 pb-6">
-        <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100/50">
-          <p className="text-sm font-semibold text-gray-800">{user?.name}</p>
-          <p className="text-xs text-blue-600 font-medium mt-0.5">{user?.role}</p>
-        </div>
-      </div>
-
-      <nav className="flex-1 px-4 space-y-2 overflow-y-auto">
+      {/* Navigation */}
+      <nav className="flex-1 flex flex-col gap-6">
         {navItems.map((item) => (
           <NavLink
-            key={item.name}
+            key={item.path}
             to={item.path}
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-all duration-200 ${
-                isActive
-                  ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-blue-600'
-              }`
+            className={({ isActive }) => 
+              `sidebar-link ${isActive ? 'active' : ''}`
             }
+            title={item.label}
           >
-            {item.icon}
-            {item.name}
+            <item.icon className="sidebar-icon" />
           </NavLink>
         ))}
       </nav>
 
-      <div className="p-4 border-t border-gray-100">
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-3 w-full px-4 py-3.5 text-sm font-medium text-red-600 rounded-xl hover:bg-red-50 transition-all duration-200"
-        >
-          <LogOut size={20} />
-          Sign Out
-        </button>
-      </div>
-    </div>
+      {/* Logout */}
+      <button 
+        onClick={handleLogout}
+        className="sidebar-link hover:text-red-500 hover:bg-red-50"
+        title="Logout"
+      >
+        <LogOut className="sidebar-icon" />
+      </button>
+    </aside>
   );
 };
 

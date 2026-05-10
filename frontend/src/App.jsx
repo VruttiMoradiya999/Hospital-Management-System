@@ -4,12 +4,20 @@ import { AuthContext, AuthProvider } from './context/AuthContext';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Patients from './pages/Patients';
-import Sidebar from './components/Sidebar';
+import Appointments from './pages/Appointments';
+import Settings from './pages/Settings';
+import Messages from './pages/Messages';
+import Reports from './pages/Reports';
+import Layout from './components/Layout';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useContext(AuthContext);
 
-  if (loading) return <div className="h-screen flex items-center justify-center text-xl text-primary font-semibold">Loading...</div>;
+  if (loading) return (
+    <div className="h-screen flex items-center justify-center">
+      <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+    </div>
+  );
 
   if (!user) {
     return <Navigate to="/login" />;
@@ -19,14 +27,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     return <Navigate to="/" />;
   }
 
-  return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden font-sans">
-      <Sidebar />
-      <div className="flex-1 overflow-y-auto p-8">
-        {children}
-      </div>
-    </div>
-  );
+  return <Layout>{children}</Layout>;
 };
 
 const AppRoutes = () => {
@@ -42,6 +43,14 @@ const AppRoutes = () => {
         } 
       />
       <Route 
+        path="/appointments" 
+        element={
+          <ProtectedRoute>
+            <Appointments />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
         path="/patients" 
         element={
           <ProtectedRoute>
@@ -49,6 +58,32 @@ const AppRoutes = () => {
           </ProtectedRoute>
         } 
       />
+      <Route 
+        path="/messages" 
+        element={
+          <ProtectedRoute>
+            <Messages />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/reports" 
+        element={
+          <ProtectedRoute>
+            <Reports />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/settings" 
+        element={
+          <ProtectedRoute>
+            <Settings />
+          </ProtectedRoute>
+        } 
+      />
+      {/* Fallback */}
+      <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
 };

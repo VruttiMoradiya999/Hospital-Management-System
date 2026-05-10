@@ -1,158 +1,284 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { Users, Activity, Calendar, TrendingUp } from 'lucide-react';
+import { 
+  Users, 
+  Calendar, 
+  Activity, 
+  Search, 
+  Bell, 
+  Star,
+  ChevronRight,
+  TrendingUp,
+  CreditCard,
+  User as UserIcon
+} from 'lucide-react';
+import { 
+  AreaChart,
+  Area,
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer
+} from 'recharts';
+import { motion } from 'framer-motion';
 import api from '../services/api';
 
-const DashboardCard = ({ title, value, icon: Icon, color, trend }) => (
-  <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-    <div className="flex items-center justify-between mb-4">
-      <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${color} bg-opacity-10`}>
-        <Icon className={`w-6 h-6 ${color.replace('bg-', 'text-')}`} />
-      </div>
-      {trend && (
-        <span className="flex items-center text-sm font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
-          <TrendingUp className="w-4 h-4 mr-1" />
-          {trend}
-        </span>
-      )}
+const StatCard = ({ title, value, icon: Icon, color, delay }) => (
+  <motion.div 
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay }}
+    className="glass-card p-6 flex flex-col items-center justify-center text-center group cursor-pointer hover:scale-[1.02] transition-all duration-300"
+  >
+    <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:rotate-6 ${color}`}>
+      <Icon className="w-8 h-8 text-white" />
     </div>
-    <h3 className="text-gray-500 text-sm font-medium">{title}</h3>
-    <p className="text-3xl font-bold text-gray-800 mt-1">{value}</p>
-  </div>
+    <h3 className="text-gray-400 text-sm font-medium uppercase tracking-wider">{title}</h3>
+    <p className="text-2xl font-bold text-gray-800 mt-1">{value}</p>
+  </motion.div>
 );
 
 const Dashboard = () => {
   const { user } = useContext(AuthContext);
-  const [stats, setStats] = useState({
-    patients: 0,
-    appointments: 0,
-    staff: 0
-  });
+  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchDashboardData = async () => {
       try {
-        const [patientsRes, appointmentsRes] = await Promise.all([
-          api.get('/patients'),
-          api.get('/appointments')
-        ]);
-        
-        let staffCount = 0;
-        if (user.role === 'Admin') {
-          const staffRes = await api.get('/users');
-          staffCount = staffRes.data.length;
-        }
-
-        setStats({
-          patients: patientsRes.data.length,
-          appointments: appointmentsRes.data.length,
-          staff: staffCount
-        });
+        const res = await api.get('/stats');
+        setData(res.data);
       } catch (error) {
-        console.error("Error fetching stats", error);
+        console.error("Error fetching dashboard data", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchStats();
-  }, [user.role]);
+    if (user) fetchDashboardData();
+  }, [user]);
 
-  if (loading) {
-    return <div className="flex items-center justify-center h-full">Loading dashboard...</div>;
-  }
+  if (loading) return (
+    <div className="h-[80vh] flex items-center justify-center">
+      <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+    </div>
+  );
+
+  const { stats, recentPatients, doctorList, chartData } = data;
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-end">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Overview</h1>
-          <p className="text-gray-500 mt-1">Welcome back, {user?.name}</p>
-        </div>
-        <div className="text-sm font-medium text-gray-500 bg-white px-4 py-2 rounded-xl border border-gray-100 shadow-sm">
-          {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-        </div>
-      </div>
+    <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
+      {/* Main Content Area */}
+      <div className="xl:col-span-3 space-y-8">
+        
+        {/* Header */}
+        <header className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800">Hello, {user?.name.split(' ')[0]}</h1>
+            <p className="text-gray-400 mt-1">Have a nice day at work and stay healthy!</p>
+          </div>
+          <div className="flex items-center gap-6">
+            <div className="relative group">
+              <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors" />
+              <input 
+                type="text" 
+                placeholder="Search anything..." 
+                className="bg-white border border-transparent focus:border-primary/20 rounded-2xl py-3 pl-12 pr-6 w-64 shadow-sm focus:outline-none transition-all"
+              />
+            </div>
+            <button className="p-3 bg-white rounded-2xl shadow-sm text-gray-400 hover:text-primary transition-colors">
+              <Bell className="w-6 h-6" />
+            </button>
+          </div>
+        </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <DashboardCard 
-          title="Total Patients" 
-          value={stats.patients} 
-          icon={Users} 
-          color="bg-blue-500 text-blue-500"
-          trend="+12%"
-        />
-        <DashboardCard 
-          title="Appointments Today" 
-          value={stats.appointments} 
-          icon={Calendar} 
-          color="bg-purple-500 text-purple-500"
-          trend="+5%"
-        />
-        <DashboardCard 
-          title="Active Treatments" 
-          value={Math.floor(stats.patients * 0.4)} 
-          icon={Activity} 
-          color="bg-emerald-500 text-emerald-500"
-        />
-        {user.role === 'Admin' && (
-          <DashboardCard 
-            title="Total Staff" 
-            value={stats.staff} 
-            icon={Users} 
-            color="bg-orange-500 text-orange-500"
-          />
-        )}
-      </div>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatCard title="Total Patients" value={stats.patients} icon={Users} color="bg-blue-400" delay={0.1} />
+          <StatCard title="Consultation" value={stats.appointments} icon={Calendar} color="bg-red-400" delay={0.2} />
+          <StatCard title="Staff" value={stats.staff} icon={Activity} color="bg-orange-300" delay={0.3} />
+          <StatCard title="Rooms" value={stats.rooms} icon={Users} color="bg-blue-300" delay={0.4} />
+        </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Appointments */}
-        <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-gray-800">Recent Appointments</h2>
-            <button className="text-blue-600 text-sm font-medium hover:text-blue-700">View All</button>
+        {/* Chart Section */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="glass-card p-8"
+        >
+          <div className="flex justify-between items-center mb-8">
+            <div className="flex items-center gap-8">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-primary"></div>
+                <span className="text-sm font-medium text-gray-600">Male</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-accent"></div>
+                <span className="text-sm font-medium text-gray-600">Female</span>
+              </div>
+            </div>
+            <select className="bg-gray-50 border-none text-sm font-medium px-4 py-2 rounded-xl focus:ring-0">
+              <option>Last 7 months</option>
+            </select>
           </div>
           
-          <div className="space-y-4">
-            {[1, 2, 3].map((_, i) => (
-              <div key={i} className="flex items-center p-4 hover:bg-gray-50 rounded-xl transition-colors border border-transparent hover:border-gray-100">
-                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold mr-4">
-                  JS
+          <div className="h-[300px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={chartData}>
+                <defs>
+                  <linearGradient id="colorMale" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#6c5ce7" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#6c5ce7" stopOpacity={0}/>
+                  </linearGradient>
+                  <linearGradient id="colorFemale" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#fab1a0" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#fab1a0" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f2f6" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#b2bec3', fontSize: 12}} />
+                <YAxis axisLine={false} tickLine={false} tick={{fill: '#b2bec3', fontSize: 12}} />
+                <Tooltip 
+                  contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                />
+                <Area type="monotone" dataKey="male" stroke="#6c5ce7" strokeWidth={3} fillOpacity={1} fill="url(#colorMale)" />
+                <Area type="monotone" dataKey="female" stroke="#fab1a0" strokeWidth={3} fillOpacity={1} fill="url(#colorFemale)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </motion.div>
+
+        {/* Recent Patients Table */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="glass-card p-8"
+        >
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-bold text-gray-800">Recent Patients</h2>
+            <button className="text-primary text-sm font-semibold flex items-center hover:underline">
+              View All <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="text-left text-gray-400 text-[11px] font-bold uppercase tracking-widest border-b border-gray-50">
+                  <th className="pb-4">PATIENT</th>
+                  <th className="pb-4">DATE</th>
+                  <th className="pb-4">DISEASE</th>
+                  <th className="pb-4">ROOM NO.</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {recentPatients.map((patient, i) => (
+                  <tr key={patient._id} className="group hover:bg-gray-50/50 transition-colors">
+                    <td className="py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">
+                          {patient.name.split(' ').map(n => n[0]).join('')}
+                        </div>
+                        <span className="font-semibold text-gray-700">{patient.name}</span>
+                      </div>
+                    </td>
+                    <td className="py-4 text-gray-500 text-sm font-medium">
+                      {new Date(patient.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="py-4 text-gray-700 font-medium">
+                      {patient.diagnosis[0]?.condition || 'General Checkup'}
+                    </td>
+                    <td className="py-4">
+                      <span className="text-primary font-bold text-sm bg-primary/5 px-3 py-1 rounded-lg">
+                        {patient.treatmentStatus}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Right Sidebar Section */}
+      <div className="space-y-8">
+        {/* Profile Card */}
+        <motion.div 
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.7 }}
+          className="glass-card overflow-hidden"
+        >
+          <div className="h-24 bg-secondary/20 relative"></div>
+          <div className="px-6 pb-8 text-center -mt-12">
+            <div className="w-24 h-24 rounded-full border-4 border-white mx-auto overflow-hidden bg-gray-200 shadow-lg mb-4">
+              <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-100 font-bold text-2xl">
+                {user?.name[0]}
+              </div>
+            </div>
+            <h3 className="text-xl font-bold text-gray-800">{user?.name}</h3>
+            <p className="text-gray-400 text-sm font-medium mt-1">{user?.role} • {user?.department || 'Medical Staff'}</p>
+            <div className="flex justify-center gap-1 mt-3">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <Star key={i} className="w-4 h-4 fill-accent text-accent" />
+              ))}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Doctor List */}
+        <motion.div 
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.8 }}
+          className="glass-card p-8"
+        >
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-bold text-gray-800">Doctor List</h2>
+            <span className="text-xs font-bold text-gray-400">Current</span>
+          </div>
+          <div className="space-y-6">
+            {doctorList.map((doc, i) => (
+              <div key={doc._id} className="flex items-center gap-4 group cursor-pointer">
+                <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center text-gray-400 group-hover:bg-primary/10 group-hover:text-primary transition-all font-bold">
+                  {doc.name[0]}
                 </div>
-                <div className="flex-1">
-                  <h4 className="font-semibold text-gray-800">John Smith</h4>
-                  <p className="text-sm text-gray-500">General Checkup</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-medium text-gray-800">10:00 AM</p>
-                  <p className="text-xs text-gray-500">Today</p>
+                <div>
+                  <h4 className="font-bold text-gray-700 text-sm group-hover:text-primary transition-colors">{doc.name}</h4>
+                  <p className="text-xs text-gray-400 font-medium">{doc.department || 'General'}</p>
                 </div>
               </div>
             ))}
           </div>
-        </div>
+        </motion.div>
 
-        {/* Quick Actions */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <h2 className="text-xl font-bold text-gray-800 mb-6">Quick Actions</h2>
-          <div className="space-y-3">
-            <button className="w-full flex items-center justify-between p-4 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors">
-              <span className="font-medium">Register Patient</span>
-              <Users className="w-5 h-5" />
-            </button>
-            <button className="w-full flex items-center justify-between p-4 rounded-xl bg-purple-50 text-purple-700 hover:bg-purple-100 transition-colors">
-              <span className="font-medium">New Appointment</span>
-              <Calendar className="w-5 h-5" />
-            </button>
-            {user.role === 'Doctor' && (
-              <button className="w-full flex items-center justify-between p-4 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors">
-                <span className="font-medium">Add Prescription</span>
-                <Activity className="w-5 h-5" />
-              </button>
-            )}
+        {/* Balance Card */}
+        <motion.div 
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.9 }}
+          className="bg-primary rounded-[32px] p-8 text-white relative overflow-hidden shadow-xl"
+        >
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold">Balance</h2>
+              <CreditCard className="w-6 h-6 opacity-50" />
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-md">
+                 <TrendingUp className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-white/60 text-sm font-medium italic">income</p>
+                <h3 className="text-3xl font-bold">$95,000</h3>
+              </div>
+            </div>
           </div>
-        </div>
+          <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+        </motion.div>
       </div>
     </div>
   );
