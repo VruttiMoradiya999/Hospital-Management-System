@@ -39,6 +39,7 @@ app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/patients', require('./routes/patientRoutes'));
 app.use('/api/appointments', require('./routes/appointmentRoutes'));
 app.use('/api/stats', require('./routes/statsRoutes'));
+app.use('/api/messages', require('./routes/messageRoutes'));
 
 // Root removed to prevent conflict with frontend
 
