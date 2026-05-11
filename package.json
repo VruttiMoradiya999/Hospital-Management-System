@@ -4,7 +4,7 @@
   "description": "Hospital Management System - Root",
   "main": "api/index.js",
   "scripts": {
-    "build": "cd frontend && vite build"
+    "build": "npm install && cd frontend && npm install && npm run build"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
@@ -17,7 +17,10 @@
     "lucide-react": "^1.14.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
-    "react-router-dom": "^7.15.0"
+    "react-router-dom": "^7.15.0",
+    "framer-motion": "^12.38.0",
+    "recharts": "^3.8.1",
+    "jspdf": "^2.5.1"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^6.0.1",
