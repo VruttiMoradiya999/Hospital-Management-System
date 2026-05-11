@@ -23,9 +23,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+      <div 
         className="max-w-md w-full glass-card p-10 border border-white/50 relative overflow-hidden"
       >
         {/* Decorative Background Element */}
@@ -43,14 +41,12 @@ const Login = () => {
           <p className="text-center text-gray-400 mb-10 font-medium">Healthcare management simplified.</p>
           
           {error && (
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
+            <div 
               className="bg-red-50 text-red-500 p-4 rounded-2xl text-sm mb-8 border border-red-100 flex items-center gap-2"
             >
               <div className="w-1.5 h-1.5 rounded-full bg-red-500"></div>
               {error}
-            </motion.div>
+            </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -85,15 +81,25 @@ const Login = () => {
           </form>
           
           <div className="mt-10 pt-8 border-t border-gray-50 text-center">
-            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Demo Access</h4>
-            <div className="grid grid-cols-1 gap-2 text-[11px] font-bold text-gray-500 uppercase">
-              <div className="bg-gray-50 py-2 rounded-lg">Admin: admin@hospital.com</div>
-              <div className="bg-gray-50 py-2 rounded-lg">Doctor: doctor@hospital.com</div>
-              <div className="bg-gray-50 py-2 rounded-lg">Nurse: nurse@hospital.com</div>
+            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Demo Access (Password: password)</h4>
+            <div className="grid grid-cols-1 gap-2">
+              {[
+                { role: 'Admin', email: 'admin@hospital.com' },
+                { role: 'Doctor', email: 'doctor@hospital.com' },
+                { role: 'Nurse', email: 'nurse@hospital.com' }
+              ].map((cred) => (
+                <button 
+                  key={cred.role}
+                  onClick={() => { setEmail(cred.email); setPassword('password'); }}
+                  className="bg-gray-50 hover:bg-primary/5 hover:text-primary py-2.5 rounded-xl text-[10px] font-bold text-gray-500 uppercase transition-all border border-transparent hover:border-primary/10"
+                >
+                  {cred.role}: {cred.email}
+                </button>
+              ))}
             </div>
           </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };

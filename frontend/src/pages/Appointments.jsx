@@ -122,11 +122,8 @@ const Appointments = () => {
         <div className="lg:col-span-2 space-y-4">
           <AnimatePresence>
             {appointments.map((apt, i) => (
-              <motion.div 
+              <div 
                 key={apt._id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.1 }}
                 className="glass-card p-6 flex items-center justify-between group hover:scale-[1.01] transition-all"
               >
                 <div className="flex items-center gap-6">
@@ -151,7 +148,7 @@ const Appointments = () => {
                       <MoreVertical className="w-5 h-5" />
                    </button>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </AnimatePresence>
 
@@ -164,9 +161,7 @@ const Appointments = () => {
 
         {/* Calendar View Placeholder */}
         <div className="space-y-6">
-           <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
+           <div 
             className="glass-card p-8 text-center"
            >
               <Calendar className="w-12 h-12 text-primary mx-auto mb-4 opacity-20" />
@@ -174,7 +169,7 @@ const Appointments = () => {
               <p className="text-sm text-gray-400 font-medium leading-relaxed">
                 Visual calendar integration coming soon to help you manage shifts better.
               </p>
-           </motion.div>
+           </div>
            
            {/* Upcoming Shifts / Stats */}
            <div className="glass-card p-8">

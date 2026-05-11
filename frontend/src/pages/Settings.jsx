@@ -71,9 +71,7 @@ const Settings = () => {
 
         {/* Settings Form */}
         <div className="md:col-span-2 space-y-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+          <div 
             className="glass-card p-8"
           >
             <div className="flex items-center gap-6 mb-10">
@@ -146,12 +144,9 @@ const Settings = () => {
                 </button>
               </div>
             </form>
-          </motion.div>
+          </div>
 
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
+          <div 
             className="glass-card p-8 border-red-50"
           >
             <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
@@ -164,7 +159,7 @@ const Settings = () => {
             <button className="text-red-500 font-bold text-sm hover:underline">
               Change Login Password
             </button>
-          </motion.div>
+          </div>
         </div>
       </div>
     </div>

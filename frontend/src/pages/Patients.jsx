@@ -104,9 +104,7 @@ const Patients = () => {
       </header>
 
       {/* Main Table Container */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+      <div 
         className="glass-card overflow-hidden"
       >
         <div className="p-6 border-b border-gray-50 flex justify-between items-center">
@@ -129,11 +127,8 @@ const Patients = () => {
             </thead>
             <tbody className="divide-y divide-gray-50/50">
               {patients.length > 0 ? patients.map((patient, i) => (
-                <motion.tr 
+                <tr 
                   key={patient._id}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05 }}
                   className="hover:bg-gray-50/50 transition-colors group"
                 >
                   <td className="px-8 py-5">
@@ -176,7 +171,7 @@ const Patients = () => {
                       </button>
                     </div>
                   </td>
-                </motion.tr>
+                </tr>
               )) : (
                 <tr>
                   <td colSpan="5" className="px-8 py-20 text-center">
@@ -201,7 +196,7 @@ const Patients = () => {
               ))}
            </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Add Patient Modal */}
       <Modal 

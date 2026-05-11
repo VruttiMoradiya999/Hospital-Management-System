@@ -19,8 +19,20 @@ app.use(express.json());
 // Robust CORS configuration
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow all origins in development, or specify your frontend URL
-    callback(null, true);
+    const allowedOrigins = [
+      'http://localhost:5173',
+      'http://127.0.0.1:5173',
+      'http://localhost:3000',
+      'http://127.0.0.1:3000',
+      'http://localhost:5174',
+      'http://127.0.0.1:5174'
+    ];
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log('Origin not allowed by CORS:', origin);
+      callback(null, true); // Still allow for now to debug
+    }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -40,14 +52,14 @@ app.use('/api/patients', require('./routes/patientRoutes'));
 app.use('/api/appointments', require('./routes/appointmentRoutes'));
 app.use('/api/stats', require('./routes/statsRoutes'));
 app.use('/api/messages', require('./routes/messageRoutes'));
-
-// Root removed to prevent conflict with frontend
+app.use('/api/reports', require('./routes/reportRoutes'));
 
 const PORT = process.env.PORT || 5000;
 
 if (process.env.NODE_ENV !== 'production') {
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  console.log(`Attempting to start server on port ${PORT}...`);
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server successfully running on http://localhost:${PORT}`);
   });
 }
 

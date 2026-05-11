@@ -100,11 +100,8 @@ const Messages = () => {
       <div className="flex-1 glass-card flex flex-col bg-white overflow-hidden relative">
         <AnimatePresence mode="wait">
           {selectedContact ? (
-            <motion.div 
+            <div 
               key={selectedContact._id}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
               className="flex flex-col h-full"
             >
               {/* Chat Header */}
@@ -156,7 +153,7 @@ const Messages = () => {
                   </button>
                 </div>
               </form>
-            </motion.div>
+            </div>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-center p-12">
                <div className="w-24 h-24 bg-primary/10 rounded-[32px] flex items-center justify-center text-primary mb-6 animate-bounce">

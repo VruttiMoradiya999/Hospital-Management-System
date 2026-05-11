@@ -24,11 +24,8 @@ import {
 import { motion } from 'framer-motion';
 import api from '../services/api';
 
-const StatCard = ({ title, value, icon: Icon, color, delay }) => (
-  <motion.div 
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ delay }}
+const StatCard = ({ title, value, icon: Icon, color }) => (
+  <div 
     className="glass-card p-6 flex flex-col items-center justify-center text-center group cursor-pointer hover:scale-[1.02] transition-all duration-300"
   >
     <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:rotate-6 ${color}`}>
@@ -36,7 +33,7 @@ const StatCard = ({ title, value, icon: Icon, color, delay }) => (
     </div>
     <h3 className="text-gray-400 text-sm font-medium uppercase tracking-wider">{title}</h3>
     <p className="text-2xl font-bold text-gray-800 mt-1">{value}</p>
-  </motion.div>
+  </div>
 );
 
 const Dashboard = () => {
@@ -95,17 +92,14 @@ const Dashboard = () => {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <StatCard title="Total Patients" value={stats.patients} icon={Users} color="bg-blue-400" delay={0.1} />
-          <StatCard title="Consultation" value={stats.appointments} icon={Calendar} color="bg-red-400" delay={0.2} />
-          <StatCard title="Staff" value={stats.staff} icon={Activity} color="bg-orange-300" delay={0.3} />
-          <StatCard title="Rooms" value={stats.rooms} icon={Users} color="bg-blue-300" delay={0.4} />
+          <StatCard title="Total Patients" value={stats.patients} icon={Users} color="bg-blue-400" />
+          <StatCard title="Consultation" value={stats.appointments} icon={Calendar} color="bg-red-400" />
+          <StatCard title="Staff" value={stats.staff} icon={Activity} color="bg-orange-300" />
+          <StatCard title="Rooms" value={stats.rooms} icon={Users} color="bg-blue-300" />
         </div>
 
         {/* Chart Section */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
+        <div 
           className="glass-card p-8"
         >
           <div className="flex justify-between items-center mb-8">
@@ -148,13 +142,10 @@ const Dashboard = () => {
               </AreaChart>
             </ResponsiveContainer>
           </div>
-        </motion.div>
+        </div>
 
         {/* Recent Patients Table */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
+        <div 
           className="glass-card p-8"
         >
           <div className="flex justify-between items-center mb-6">
@@ -200,16 +191,13 @@ const Dashboard = () => {
               </tbody>
             </table>
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Right Sidebar Section */}
       <div className="space-y-8">
         {/* Profile Card */}
-        <motion.div 
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.7 }}
+        <div 
           className="glass-card overflow-hidden"
         >
           <div className="h-24 bg-secondary/20 relative"></div>
@@ -227,13 +215,10 @@ const Dashboard = () => {
               ))}
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Doctor List */}
-        <motion.div 
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.8 }}
+        <div 
           className="glass-card p-8"
         >
           <div className="flex justify-between items-center mb-6">
@@ -253,13 +238,10 @@ const Dashboard = () => {
               </div>
             ))}
           </div>
-        </motion.div>
+        </div>
 
         {/* Balance Card */}
-        <motion.div 
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.9 }}
+        <div 
           className="bg-primary rounded-[32px] p-8 text-white relative overflow-hidden shadow-xl"
         >
           <div className="relative z-10">
@@ -278,7 +260,7 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );
