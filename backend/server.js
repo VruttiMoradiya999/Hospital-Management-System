@@ -45,6 +45,11 @@ app.use((req, res, next) => {
   next();
 });
 
+// Health Check
+app.get('/api/ping', (req, res) => {
+  res.json({ status: 'ok', message: 'Backend is reachable', timestamp: new Date() });
+});
+
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
